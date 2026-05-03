@@ -60,6 +60,8 @@ Available targets:
 - `just ruff`: run Ruff linting.
 - `just build`: build wheel and source distribution.
 - `just docs`: build API docs.
+- `just docs-serve`: serve docs locally.
+- `just docs-open`: build docs and open the generated site.
 - `just check-dist`: validate built package metadata.
 - `just check`: run one normal check using `config.toml`.
 - `just watch`: keep polling using `config.toml`.
@@ -490,13 +492,19 @@ Docs are ready to build with MkDocs and mkdocstrings.
 Build docs locally:
 
 ```bash
-uv run --extra dev mkdocs build --strict
+just docs
 ```
 
 Serve docs locally:
 
 ```bash
-uv run --extra dev mkdocs serve
+just docs-serve
+```
+
+Build and open docs:
+
+```bash
+just docs-open
 ```
 
 API docs are configured in:

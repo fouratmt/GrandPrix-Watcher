@@ -5,6 +5,10 @@ theme:
   name: material
 nav:
   - Home: index.md
+  - Usage: usage.md
+  - Configuration: configuration.md
+  - Development: development.md
+  - Publishing: publishing.md
   - API Reference: api.md
 plugins:
   - search

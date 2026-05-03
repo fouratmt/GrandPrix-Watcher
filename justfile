@@ -25,6 +25,15 @@ ruff:
 docs:
     uv run --extra dev mkdocs build --strict
 
+# Serve docs locally.
+docs-serve:
+    uv run --extra dev mkdocs serve
+
+# Build docs and open the generated site in the default browser.
+docs-open:
+    uv run --extra dev mkdocs build --strict
+    open site/index.html
+
 # Build wheel and source distribution.
 build:
     uv build
