@@ -13,10 +13,13 @@ match_all = []
 # Optional: at least one of these terms must appear.
 match_any = []
 
-# Optional: regex applied to the link title and URL.
-# This example matches the main race post, not practice/qualifying posts that
-# also contain the phrase "Full Race Replay".
-regex = "^RACE\\b"
+# Optional event shorthand: race, sprint, qualifying, practice,
+# sprint-qualifying, paddock, press.
+event = "race"
+
+# Optional lower-level regex override applied to link title and URL.
+# Usually prefer event above.
+regex = ""
 
 # First run normally initializes state without notifying for old posts.
 notify_existing = false

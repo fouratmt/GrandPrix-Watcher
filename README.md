@@ -14,7 +14,8 @@ url = "https://fullraces.com/2026"
 grand_prix = "miami"
 match_all = []
 match_any = []
-regex = "^RACE\\b"
+event = "race"
+regex = ""
 notify_existing = false
 include_seen = false
 state_file = ".crawler_state.json"
@@ -24,6 +25,12 @@ interval_seconds = 900
 [notify]
 methods = ["macos", "browser"]
 webhook_url = ""
+```
+
+Create/update the development environment:
+
+```bash
+uv sync --extra dev
 ```
 
 Run one check:
@@ -49,7 +56,11 @@ just
 Available targets:
 
 - `just lint`: validate Python syntax.
-- `just test`: run lightweight local tests for matching aliases.
+- `just test`: run the pytest suite with coverage.
+- `just ruff`: run Ruff linting.
+- `just build`: build wheel and source distribution.
+- `just docs`: build API docs.
+- `just check-dist`: validate built package metadata.
 - `just check`: run one normal check using `config.toml`.
 - `just watch`: keep polling using `config.toml`.
 - `just force`: run one check and notify/open matches even if they were already seen.
@@ -121,8 +132,8 @@ just force-for race miami
 Equivalent Python CLI:
 
 ```bash
-python3 crawler.py --config config.toml --include-seen
-python3 crawler.py --config config.toml --grand-prix miami --regex "^RACE\\b" --include-seen
+uv run f1-monitor --config config.toml --include-seen
+uv run f1-monitor --config config.toml --grand-prix miami --event race --include-seen
 ```
 
 You can also make this permanent in `config.toml`:
@@ -234,15 +245,35 @@ Leave it empty if you do not need an either/or condition:
 match_any = []
 ```
 
-`regex`
+`event`
 
-A regular expression that must match the link title or URL. This is useful when simple keywords are too broad.
+Optional event shorthand. Prefer this over writing event regexes manually.
 
 ```toml
-regex = "^RACE\\b"
+event = "race"
 ```
 
-For this site, many posts contain the phrase `Full Race Replay`, so `match_all = ["race"]` would also match practice and qualifying posts. The regex above matches titles that start with `RACE`.
+Supported values:
+
+- `race`
+- `sprint`
+- `qualifying`
+- `practice`
+- `sprint-qualifying`
+- `paddock`
+- `press`
+
+`sprint` only matches the sprint race. It does not match Sprint Qualifying.
+
+`regex`
+
+A lower-level regular expression override that must match the link title or URL. Usually prefer `event`.
+
+```toml
+regex = ""
+```
+
+For this site, many posts contain the phrase `Full Race Replay`, so `match_all = ["race"]` would also match practice and qualifying posts. Use `event = "race"` to match only the race post.
 
 Leave it empty to disable regex matching:
 
@@ -354,40 +385,122 @@ The script sends JSON like this:
 
 ## Python CLI
 
-The `just` commands are wrappers around the Python CLI.
+The `just` commands are wrappers around the installed CLI run through `uv`.
 
 Run once:
 
 ```bash
-python3 crawler.py --config config.toml
+uv run f1-monitor --config config.toml
 ```
 
 Watch:
 
 ```bash
-python3 crawler.py --config config.toml --watch
+uv run f1-monitor --config config.toml --watch
 ```
 
 Force already-seen matches:
 
 ```bash
-python3 crawler.py --config config.toml --include-seen
+uv run f1-monitor --config config.toml --include-seen
 ```
 
 Override event/location from the command line:
 
 ```bash
-python3 crawler.py --config config.toml --grand-prix monaco --event race
+uv run f1-monitor --config config.toml --grand-prix monaco --event race
 ```
 
 Use Grand Prix shorthand with aliases:
 
 ```bash
-python3 crawler.py --config config.toml --grand-prix japan --event race
+uv run f1-monitor --config config.toml --grand-prix japan --event race
 ```
 
 Override notification methods:
 
 ```bash
-python3 crawler.py --config config.toml --notify macos --notify browser
+uv run f1-monitor --config config.toml --notify macos --notify browser
 ```
+
+## Packaging And Release
+
+The project uses a standard `src/` layout and `pyproject.toml`.
+
+Install/sync development dependencies:
+
+```bash
+uv sync --extra dev
+```
+
+Run checks:
+
+```bash
+just lint
+just ruff
+just test
+```
+
+Build distributions:
+
+```bash
+just build
+```
+
+Check the build artifacts:
+
+```bash
+uv run --extra dev twine check dist/*
+```
+
+Install the built wheel locally:
+
+```bash
+uv pip install dist/f1_race_monitor-0.1.0-py3-none-any.whl
+```
+
+Run the installed CLI:
+
+```bash
+f1-monitor --config config.toml
+```
+
+Publish to PyPI manually:
+
+```bash
+uv run --extra dev twine upload dist/*
+```
+
+The repository also includes GitHub Actions:
+
+- `.github/workflows/ci.yml`: lint, test with coverage, build package, check metadata, build docs.
+- `.github/workflows/publish.yml`: publish to PyPI on GitHub Release using trusted publishing.
+
+Before publishing, update these fields in `pyproject.toml` if needed:
+
+- `version`
+- `authors`
+- `project.urls`
+- license choice
+
+## API Docs
+
+Docs are ready to build with MkDocs and mkdocstrings.
+
+Build docs locally:
+
+```bash
+uv run --extra dev mkdocs build --strict
+```
+
+Serve docs locally:
+
+```bash
+uv run --extra dev mkdocs serve
+```
+
+API docs are configured in:
+
+- `mkdocs.yml`
+- `docs/index.md`
+- `docs/api.md`
