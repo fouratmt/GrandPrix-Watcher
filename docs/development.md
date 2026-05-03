@@ -24,7 +24,7 @@ The coverage threshold is configured in `pyproject.toml`:
 
 ```toml
 [tool.pytest.ini_options]
-addopts = "--cov=f1_race_monitor --cov-report=term-missing --cov-report=xml --cov-fail-under=90"
+addopts = "--cov=f1_race_monitor --cov-report=term-missing --cov-report=xml --cov-fail-under=100"
 ```
 
 ## Lint

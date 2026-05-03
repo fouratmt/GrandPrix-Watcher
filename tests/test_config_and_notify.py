@@ -53,6 +53,10 @@ def test_as_string_list_rejects_invalid_type() -> None:
         as_string_list(1)
 
 
+def test_as_string_list_accepts_string() -> None:
+    assert as_string_list("miami") == ["miami"]
+
+
 def test_build_config_from_file(tmp_path: Path) -> None:
     config_file = tmp_path / "config.toml"
     config_file.write_text(
@@ -119,12 +123,35 @@ def test_build_config_cli_overrides_file(tmp_path: Path) -> None:
     assert config.notify.methods == ["browser"]
 
 
+def test_build_config_regex_override_and_config_regex(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.toml"
+    config_file.write_text(
+        """
+        [watch]
+        url = "https://fullraces.com/2026"
+        regex = "^Configured"
+        match_all = "configured"
+        match_any = "one"
+        """,
+        encoding="utf-8",
+    )
+
+    from_file = build_config(make_args(config=str(config_file)))
+    from_cli = build_config(make_args(config=str(config_file), regex="^CLI"))
+
+    assert from_file.watch.regex == "^Configured"
+    assert from_file.watch.match_all == ["configured"]
+    assert from_file.watch.match_any == ["one"]
+    assert from_cli.watch.regex == "^CLI"
+
+
 def test_notify_dispatch(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     calls = []
     item = LinkItem("RACE - F1 2026 - Miami Grand Prix", "https://example.com/video")
 
     monkeypatch.setattr("f1_race_monitor.core.notify_console", lambda item: calls.append("console"))
     monkeypatch.setattr("f1_race_monitor.core.notify_macos", lambda item: calls.append("macos"))
+    monkeypatch.setattr("f1_race_monitor.core.notify_desktop", lambda item: calls.append("desktop"))
     monkeypatch.setattr("f1_race_monitor.core.notify_browser", lambda item: calls.append("browser"))
     monkeypatch.setattr(
         "f1_race_monitor.core.notify_webhook",
@@ -133,10 +160,30 @@ def test_notify_dispatch(monkeypatch) -> None:  # type: ignore[no-untyped-def]
 
     notify(
         item,
-        NotifyConfig(methods=["console", "macos", "browser", "webhook", "unknown"], webhook_url="hook"),
+        NotifyConfig(
+            methods=["console", "macos", "desktop", "browser", "webhook", "unknown"],
+            webhook_url="hook",
+        ),
     )
 
-    assert calls == ["console", "macos", "browser", ("webhook", "hook")]
+    assert calls == ["console", "macos", "desktop", "browser", ("webhook", "hook")]
+
+
+def test_notify_console(capsys) -> None:  # type: ignore[no-untyped-def]
+    notify(
+        LinkItem("RACE - F1 2026 - Miami Grand Prix", "https://example.com/video"),
+        NotifyConfig(methods=["console"], webhook_url=""),
+    )
+
+    assert "New match: RACE - F1 2026 - Miami Grand Prix" in capsys.readouterr().out
+
+
+def test_notify_macos_unavailable(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Linux")
+
+    notify_macos(LinkItem("Title", "https://example.com/video"))
+
+    assert "macOS notifications require AppleScript" in capsys.readouterr().err
 
 
 def test_notify_macos_uses_osascript(monkeypatch) -> None:  # type: ignore[no-untyped-def]
@@ -166,6 +213,27 @@ def test_notify_desktop_linux_uses_notify_send(monkeypatch) -> None:  # type: ig
     assert calls == [["notify-send", "New video match", "Title\nhttps://example.com/video"]]
 
 
+def test_notify_desktop_darwin_delegates_to_macos(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    calls = []
+    item = LinkItem("Title", "https://example.com/video")
+
+    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Darwin")
+    monkeypatch.setattr("f1_race_monitor.core.notify_macos", lambda item: calls.append(item))
+
+    notify_desktop(item)
+
+    assert calls == [item]
+
+
+def test_notify_desktop_unavailable(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Linux")
+    monkeypatch.setattr("f1_race_monitor.core.shutil.which", lambda command: None)
+
+    notify_desktop(LinkItem("Title", "https://example.com/video"))
+
+    assert "Desktop notifications are not available" in capsys.readouterr().err
+
+
 def test_notify_browser(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     calls = []
     item = LinkItem("Title", "https://example.com/video")
@@ -178,6 +246,22 @@ def test_notify_browser(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     notify_browser(item)
 
     assert calls == [(item.url, 2)]
+
+
+def test_notify_browser_failure(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
+    item = LinkItem("Title", "https://example.com/video")
+
+    monkeypatch.setattr("f1_race_monitor.core.webbrowser.open", lambda url, new: False)
+
+    notify_browser(item)
+
+    assert "Could not open browser" in capsys.readouterr().err
+
+
+def test_notify_webhook_empty_url(capsys) -> None:  # type: ignore[no-untyped-def]
+    notify_webhook(LinkItem("Title", "https://example.com/video"), "")
+
+    assert "Skipping webhook notification" in capsys.readouterr().err
 
 
 def test_notify_webhook(monkeypatch) -> None:  # type: ignore[no-untyped-def]

@@ -1,6 +1,6 @@
-# F1 Page Monitor
+# F1 Race Monitor
 
-A small dependency-free Python crawler that checks a blog/category page for new matching links, then notifies you and can open the matched link in your default browser.
+A runtime dependency-free Python package and CLI that checks a blog/category page for new matching links, then notifies you and can open the matched link in your default browser.
 
 It only monitors public page links and sends notifications. It does not download videos or bypass site controls.
 
@@ -55,11 +55,12 @@ just
 
 Available targets:
 
+- `just sync`: create or update the uv environment with development dependencies.
 - `just lint`: validate Python syntax.
-- `just test`: run the pytest suite with coverage.
+- `just test`: run the pytest suite with 100% coverage enforcement.
 - `just ruff`: run Ruff linting.
 - `just build`: build wheel and source distribution.
-- `just docs`: build API docs.
+- `just docs`: build docs.
 - `just docs-serve`: serve docs locally.
 - `just docs-open`: build docs and open the generated site.
 - `just check-dist`: validate built package metadata.
@@ -438,10 +439,13 @@ uv sync --extra dev
 Run checks:
 
 ```bash
+just sync
 just lint
 just ruff
 just test
 ```
+
+`just test` enforces 100% coverage.
 
 Build distributions:
 
@@ -511,4 +515,8 @@ API docs are configured in:
 
 - `mkdocs.yml`
 - `docs/index.md`
+- `docs/usage.md`
+- `docs/configuration.md`
+- `docs/development.md`
+- `docs/publishing.md`
 - `docs/api.md`

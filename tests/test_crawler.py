@@ -16,9 +16,11 @@ from f1_race_monitor.core import is_pagination_link, load_seen, save_seen
 
 def test_extract_links_deduplicates_and_resolves_urls() -> None:
     html = """
+    <span>Ignored</span>
     <a href="/race">RACE - F1 2026 - Miami Grand Prix</a>
     <a href="/race">RACE - F1 2026 - Miami Grand Prix</a>
     <a href="">Empty</a>
+    <a href="/empty-title"></a>
     """
 
     links = extract_links(html, "https://fullraces.com/2026")
@@ -34,8 +36,10 @@ def test_extract_links_deduplicates_and_resolves_urls() -> None:
 def test_is_pagination_link() -> None:
     assert is_pagination_link(LinkItem("2", "https://fullraces.com/2026/2"), "https://fullraces.com/2026")
     assert is_pagination_link(LinkItem("»", "https://fullraces.com/2026/2"), "https://fullraces.com/2026")
+    assert is_pagination_link(LinkItem(">", "https://fullraces.com/2026/2"), "https://fullraces.com/2026")
     assert not is_pagination_link(LinkItem("Watch", "https://fullraces.com/race"), "https://fullraces.com/2026")
     assert not is_pagination_link(LinkItem("2", "https://example.com/2026/2"), "https://fullraces.com/2026")
+    assert not is_pagination_link(LinkItem("2", "https://fullraces.com/2026"), "https://fullraces.com/2026")
 
 
 def test_crawl_links_follows_pagination(monkeypatch, watch_config: WatchConfig) -> None:  # type: ignore[no-untyped-def]
@@ -78,6 +82,31 @@ def test_crawl_links_respects_max_pages(monkeypatch, watch_config: WatchConfig) 
     monkeypatch.setattr("f1_race_monitor.core.fetch_html", lambda url, user_agent: pages[url])
 
     assert [link.title for link in crawl_links(watch_config)] == ["RACE - F1 2026 - Miami Grand Prix", "2"]
+
+
+def test_crawl_links_deduplicates_across_pages_and_ignores_known_page(
+    monkeypatch,
+    watch_config: WatchConfig,
+) -> None:  # type: ignore[no-untyped-def]
+    pages = {
+        "https://fullraces.com/2026": """
+            <a href="/race-miami">RACE - F1 2026 - Miami Grand Prix</a>
+            <a href="/2026/2">2</a>
+            <a href="/2026/2">Next</a>
+        """,
+        "https://fullraces.com/2026/2": """
+            <a href="/race-miami">RACE - F1 2026 - Miami Grand Prix</a>
+            <a href="/race-china">RACE - F1 2026 - Chinese Grand Prix</a>
+        """,
+    }
+
+    monkeypatch.setattr("f1_race_monitor.core.fetch_html", lambda url, user_agent: pages[url])
+
+    assert [link.title for link in crawl_links(watch_config)] == [
+        "RACE - F1 2026 - Miami Grand Prix",
+        "2",
+        "RACE - F1 2026 - Chinese Grand Prix",
+    ]
 
 
 def test_seen_state_round_trip(tmp_path: Path) -> None:

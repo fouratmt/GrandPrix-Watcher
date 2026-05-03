@@ -98,3 +98,20 @@ def test_match_all_match_any_and_regex(tmp_path: Path) -> None:
     assert item_matches(matching, config)
     assert not item_matches(missing_any, config)
     assert not item_matches(wrong_event, config)
+
+
+def test_match_all_missing_returns_false(tmp_path: Path) -> None:
+    config = config_for_grand_prix(tmp_path, "miami")
+    config.match_all = ["not present"]
+
+    item = LinkItem("RACE - F1 2026 - Miami Grand Prix", "https://example.com/video")
+
+    assert not item_matches(item, config)
+
+
+def test_grand_prix_missing_returns_false(tmp_path: Path) -> None:
+    config = config_for_grand_prix(tmp_path, "miami")
+
+    item = LinkItem("RACE - F1 2026 - Monaco Grand Prix", "https://example.com/video")
+
+    assert not item_matches(item, config)

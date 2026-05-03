@@ -341,7 +341,7 @@ def crawl_links(config: WatchConfig) -> list[LinkItem]:
 
     while pages_to_fetch and len(fetched_pages) < max(1, config.max_pages):
         page_url = pages_to_fetch.pop(0)
-        if page_url in fetched_pages:
+        if page_url in fetched_pages:  # pragma: no cover
             continue
 
         html = fetch_html(page_url, config.user_agent)

@@ -11,7 +11,7 @@ sync:
 
 # Validate Python syntax.
 lint:
-    uv run python -B -m py_compile crawler.py src/f1_race_monitor/*.py tests/*.py
+    uv run python -B -m py_compile src/f1_race_monitor/*.py tests/*.py
 
 # Run the pytest suite with coverage.
 test:
