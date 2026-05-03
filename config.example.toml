@@ -1,0 +1,38 @@
+[watch]
+url = "https://fullraces.com/2026"
+
+# Grand Prix shorthand. Examples:
+# "japan" matches "Japanese Grand Prix".
+# "sao-paulo" matches "São Paulo Grand Prix".
+# "uk" or "silverstone" matches "British Grand Prix".
+grand_prix = "miami"
+
+# All of these additional terms must appear in the link title or URL.
+match_all = []
+
+# Optional: at least one of these terms must appear.
+match_any = []
+
+# Optional: regex applied to the link title and URL.
+# This example matches the main race post, not practice/qualifying posts that
+# also contain the phrase "Full Race Replay".
+regex = "^RACE\\b"
+
+# First run normally initializes state without notifying for old posts.
+notify_existing = false
+
+# When true, matching links notify/open even if already present in state_file.
+# Keep this false for normal watch mode to avoid re-opening the same link on
+# every polling interval.
+include_seen = false
+
+state_file = ".crawler_state.json"
+max_pages = 3
+interval_seconds = 900
+
+[notify]
+# Supported methods: "console", "macos", "desktop", "browser", "webhook".
+# "macos" uses Apple Notification Center through AppleScript.
+# "browser" opens the matched link in your default browser.
+methods = ["macos", "browser"]
+webhook_url = ""

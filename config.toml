@@ -1,0 +1,15 @@
+[watch]
+url = "https://fullraces.com/2026"
+grand_prix = "miami"
+match_all = []
+match_any = []
+regex = "^RACE\\b"
+notify_existing = false
+include_seen = false
+state_file = ".crawler_state.json"
+max_pages = 3
+interval_seconds = 900
+
+[notify]
+methods = ["macos", "browser"]
+webhook_url = ""
