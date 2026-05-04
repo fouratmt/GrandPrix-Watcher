@@ -42,6 +42,10 @@ build:
 check-dist:
     uv run --extra dev twine check dist/*
 
+# Remove generated test, build, docs, and Python cache artifacts.
+clean:
+    uv run python -c 'from pathlib import Path; import shutil; paths = [".coverage", "coverage.xml", "build", "dist", "site", "htmlcov", ".pytest_cache", ".ruff_cache", ".mypy_cache", "src/f1_race_monitor.egg-info", "__pycache__", "tests/__pycache__", "src/f1_race_monitor/__pycache__"]; [shutil.rmtree(path, ignore_errors=True) if Path(path).is_dir() else Path(path).unlink(missing_ok=True) for path in paths]'
+
 # Run one normal check using config.toml.
 check config=config:
     uv run f1-monitor --config {{config}}

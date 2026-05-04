@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
 .coverage
 coverage.xml
@@ -7,9 +8,16 @@ htmlcov/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.hypothesis/
+.tox/
+.nox/
 build/
 dist/
 site/
 .venv/
 venv/
+.env
+.env.*
+!.env.example
 .crawler_state.json
+.DS_Store

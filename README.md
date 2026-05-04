@@ -45,42 +45,175 @@ Keep watching:
 just watch
 ```
 
-## Just Commands
+## Just Target Reference
 
-List commands:
+List all available targets:
 
 ```bash
 just
 ```
 
-Available targets:
+### Environment And Quality
 
-- `just sync`: create or update the uv environment with development dependencies.
-- `just lint`: validate Python syntax.
-- `just test`: run the pytest suite with 100% coverage enforcement.
-- `just ruff`: run Ruff linting.
-- `just build`: build wheel and source distribution.
-- `just docs`: build docs.
-- `just docs-serve`: serve docs locally.
-- `just docs-open`: build docs and open the generated site.
-- `just check-dist`: validate built package metadata.
-- `just check`: run one normal check using `config.toml`.
-- `just watch`: keep polling using `config.toml`.
-- `just force`: run one check and notify/open matches even if they were already seen.
-- `just for race miami`: run one check for a specific event and Grand Prix.
-- `just watch-for race miami`: keep polling for a specific event and Grand Prix.
-- `just force-for race miami`: notify/open a specific event and Grand Prix even if already seen.
-- `just notify-test`: send a local Apple Notification Center test notification.
+`just sync`
 
-Dynamic examples:
+Creates or updates the uv-managed development environment with the `dev` dependency group.
+
+```bash
+just sync
+```
+
+`just lint`
+
+Runs Python bytecode compilation for the package and tests. This catches syntax errors without running the full test suite.
+
+```bash
+just lint
+```
+
+`just ruff`
+
+Runs Ruff linting across the repository.
+
+```bash
+just ruff
+```
+
+`just test`
+
+Runs the pytest suite with coverage. The project currently enforces 100% coverage.
+
+```bash
+just test
+```
+
+`just clean`
+
+Removes generated artifacts: coverage output, package build output, generated docs, pytest/ruff/mypy caches, Python cache directories, and package egg-info. It does not remove `.venv`, `uv.lock`, config files, or `.crawler_state.json`.
+
+```bash
+just clean
+```
+
+### Documentation
+
+`just docs`
+
+Builds the MkDocs site in strict mode.
+
+```bash
+just docs
+```
+
+`just docs-serve`
+
+Starts a local MkDocs development server.
+
+```bash
+just docs-serve
+```
+
+`just docs-open`
+
+Builds the static docs site and opens `site/index.html` in the default browser.
+
+```bash
+just docs-open
+```
+
+### Packaging
+
+`just build`
+
+Builds the source distribution and wheel into `dist/`.
+
+```bash
+just build
+```
+
+`just check-dist`
+
+Runs `twine check` against the built artifacts in `dist/`.
+
+```bash
+just check-dist
+```
+
+### Runtime Monitoring
+
+`just check`
+
+Runs one normal check using `config.toml`, then exits.
+
+```bash
+just check
+```
+
+Use another config file:
+
+```bash
+just check config.dev.toml
+```
+
+`just watch`
+
+Runs the configured check repeatedly using `interval_seconds`.
+
+```bash
+just watch
+```
+
+`just force`
+
+Runs one check and notifies/opens matching links even if they are already recorded in `state_file`.
+
+```bash
+just force
+```
+
+`just for <event> <place> [config]`
+
+Runs one check for a specific event and Grand Prix shorthand.
 
 ```bash
 just for race miami
-just for race japan
 just for sprint monaco
-just watch-for race abu-dhabi
-just force-for race miami
+just for race japan
 ```
+
+`just watch-for <event> <place> [config]`
+
+Keeps polling for a specific event and Grand Prix shorthand.
+
+```bash
+just watch-for race abu-dhabi
+just watch-for sprint sao-paulo
+```
+
+`just force-for <event> <place> [config]`
+
+Runs one event/location check and notifies/opens matching links even if they were already seen.
+
+```bash
+just force-for race china
+just force-for sprint miami
+```
+
+Pass another config file as the final argument:
+
+```bash
+just watch-for race miami config.dev.toml
+```
+
+`just notify-test`
+
+Sends a local Apple Notification Center test notification. This does not fetch the web page.
+
+```bash
+just notify-test
+```
+
+### Dynamic Values
 
 Supported event names:
 
@@ -108,13 +241,6 @@ just for race japan
 just watch-for race japan
 just for race uk
 just for race mexico-city
-```
-
-To use another config file, pass it as the last argument:
-
-```bash
-just check config.dev.toml
-just watch-for race miami config.dev.toml
 ```
 
 ## Seen State

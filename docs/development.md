@@ -45,6 +45,14 @@ just check-dist
 
 Build artifacts are written to `dist/`.
 
+Clean generated artifacts:
+
+```bash
+just clean
+```
+
+`just clean` removes caches, coverage output, package build artifacts, and the generated docs site. It does not remove `.venv`, `uv.lock`, config files, or `.crawler_state.json`.
+
 ## Documentation
 
 ```bash
