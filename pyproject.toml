@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [
-  { name = "Fourat" },
+  { name = "Fourat Mt" },
 ]
 keywords = ["grand-prix", "f1", "formula-1", "crawler", "monitor", "notifications"]
 classifiers = [
@@ -46,9 +46,9 @@ dev = [
 grandprix-watcher = "grandprix_watcher.core:main"
 
 [project.urls]
-Homepage = "https://github.com/fourat/grandprix-watcher"
-Repository = "https://github.com/fourat/grandprix-watcher"
-Issues = "https://github.com/fourat/grandprix-watcher/issues"
+Homepage = "https://github.com/fouratmt/GrandPrix-Watcher"
+Repository = "https://github.com/fouratmt/GrandPrix-Watcher"
+Issues = "https://github.com/fouratmt/GrandPrix-Watcher/issues"
 
 [tool.uv]
 package = true

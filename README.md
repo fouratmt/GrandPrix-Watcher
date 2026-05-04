@@ -41,7 +41,7 @@ just --version
 ### 2. Get The Source Code
 
 ```bash
-git clone https://github.com/fourat/grandprix-watcher.git
+git clone https://github.com/fouratmt/GrandPrix-Watcher.git
 cd grandprix-watcher
 ```
 

@@ -1,6 +1,6 @@
 site_name: GrandPrix Watcher
 site_description: API and usage documentation for grandprix-watcher.
-repo_url: https://github.com/fourat/grandprix-watcher
+repo_url: https://github.com/fouratmt/GrandPrix-Watcher
 theme:
   name: material
 nav:
