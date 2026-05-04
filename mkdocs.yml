@@ -1,6 +1,6 @@
-site_name: F1 Race Monitor
-site_description: API and usage documentation for f1-race-monitor.
-repo_url: https://github.com/fourat/f1-race-monitor
+site_name: GrandPrix Watcher
+site_description: API and usage documentation for grandprix-watcher.
+repo_url: https://github.com/fourat/grandprix-watcher
 theme:
   name: material
 nav:

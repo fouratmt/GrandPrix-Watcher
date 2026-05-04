@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from f1_race_monitor import WatchConfig, normalize_grand_prix
+from grandprix_watcher import WatchConfig, normalize_grand_prix
 
 
 @pytest.fixture

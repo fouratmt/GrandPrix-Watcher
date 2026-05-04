@@ -1,6 +1,6 @@
-# F1 Race Monitor
+# GrandPrix Watcher
 
-`f1-race-monitor` watches Formula 1 replay listing pages and notifies you when matching videos appear.
+`grandprix-watcher` watches Formula 1 replay listing pages and notifies you when matching videos appear.
 
 It is built for a simple workflow:
 
@@ -23,7 +23,7 @@ just force-for race china
 The installed CLI is also available directly:
 
 ```bash
-uv run f1-monitor --config config.toml --grand-prix japan --event race
+uv run grandprix-watcher --config config.toml --grand-prix japan --event race
 ```
 
 ## Main Concepts

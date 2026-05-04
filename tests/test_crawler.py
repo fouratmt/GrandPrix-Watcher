@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from f1_race_monitor import (
+from grandprix_watcher import (
     AppConfig,
     LinkItem,
     NotifyConfig,
@@ -11,7 +11,7 @@ from f1_race_monitor import (
     crawl_links,
     extract_links,
 )
-from f1_race_monitor.core import is_pagination_link, load_seen, save_seen
+from grandprix_watcher.core import is_pagination_link, load_seen, save_seen
 
 
 def test_extract_links_deduplicates_and_resolves_urls() -> None:
@@ -56,7 +56,7 @@ def test_crawl_links_follows_pagination(monkeypatch, watch_config: WatchConfig) 
     def fake_fetch(url: str, user_agent: str) -> str:
         return pages[url]
 
-    monkeypatch.setattr("f1_race_monitor.core.fetch_html", fake_fetch)
+    monkeypatch.setattr("grandprix_watcher.core.fetch_html", fake_fetch)
 
     links = crawl_links(watch_config)
 
@@ -79,7 +79,7 @@ def test_crawl_links_respects_max_pages(monkeypatch, watch_config: WatchConfig) 
         """,
     }
 
-    monkeypatch.setattr("f1_race_monitor.core.fetch_html", lambda url, user_agent: pages[url])
+    monkeypatch.setattr("grandprix_watcher.core.fetch_html", lambda url, user_agent: pages[url])
 
     assert [link.title for link in crawl_links(watch_config)] == ["RACE - F1 2026 - Miami Grand Prix", "2"]
 
@@ -100,7 +100,7 @@ def test_crawl_links_deduplicates_across_pages_and_ignores_known_page(
         """,
     }
 
-    monkeypatch.setattr("f1_race_monitor.core.fetch_html", lambda url, user_agent: pages[url])
+    monkeypatch.setattr("grandprix_watcher.core.fetch_html", lambda url, user_agent: pages[url])
 
     assert [link.title for link in crawl_links(watch_config)] == [
         "RACE - F1 2026 - Miami Grand Prix",
@@ -124,8 +124,8 @@ def test_check_once_initializes_state_without_notifying(monkeypatch, watch_confi
     watch_config.grand_prix_terms = ["miami grand prix"]
     app_config = AppConfig(watch=watch_config, notify=NotifyConfig(methods=["console"], webhook_url=""))
 
-    monkeypatch.setattr("f1_race_monitor.core.crawl_links", lambda config: [item])
-    monkeypatch.setattr("f1_race_monitor.core.notify", lambda item, config: notified.append(item))
+    monkeypatch.setattr("grandprix_watcher.core.crawl_links", lambda config: [item])
+    monkeypatch.setattr("grandprix_watcher.core.notify", lambda item, config: notified.append(item))
 
     assert check_once(app_config) == 0
     assert notified == []
@@ -139,8 +139,8 @@ def test_check_once_notifies_new_matches(monkeypatch, watch_config: WatchConfig)
     watch_config.grand_prix_terms = ["miami grand prix"]
     app_config = AppConfig(watch=watch_config, notify=NotifyConfig(methods=["console"], webhook_url=""))
 
-    monkeypatch.setattr("f1_race_monitor.core.crawl_links", lambda config: [item])
-    monkeypatch.setattr("f1_race_monitor.core.notify", lambda item, config: notified.append(item))
+    monkeypatch.setattr("grandprix_watcher.core.crawl_links", lambda config: [item])
+    monkeypatch.setattr("grandprix_watcher.core.notify", lambda item, config: notified.append(item))
 
     assert check_once(app_config) == 1
     assert notified == [item]
@@ -155,8 +155,8 @@ def test_check_once_include_seen_notifies_existing(monkeypatch, watch_config: Wa
     save_seen(watch_config.state_file, {item.url})
     app_config = AppConfig(watch=watch_config, notify=NotifyConfig(methods=["console"], webhook_url=""))
 
-    monkeypatch.setattr("f1_race_monitor.core.crawl_links", lambda config: [item])
-    monkeypatch.setattr("f1_race_monitor.core.notify", lambda item, config: notified.append(item))
+    monkeypatch.setattr("grandprix_watcher.core.crawl_links", lambda config: [item])
+    monkeypatch.setattr("grandprix_watcher.core.notify", lambda item, config: notified.append(item))
 
     assert check_once(app_config) == 1
     assert notified == [item]

@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from f1_race_monitor import LinkItem, event_regex, item_matches, normalize_grand_prix, normalize_search_text
-from f1_race_monitor.core import GRAND_PRIX_ALIASES
+from grandprix_watcher import LinkItem, event_regex, item_matches, normalize_grand_prix, normalize_search_text
+from grandprix_watcher.core import GRAND_PRIX_ALIASES
 from tests.conftest import config_for_grand_prix
 
 

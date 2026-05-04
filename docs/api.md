@@ -7,7 +7,7 @@ The package exposes a small API for embedding the monitor in another Python prog
 ```python
 from pathlib import Path
 
-from f1_race_monitor import AppConfig, NotifyConfig, WatchConfig, check_once, normalize_grand_prix
+from grandprix_watcher import AppConfig, NotifyConfig, WatchConfig, check_once, normalize_grand_prix
 
 watch = WatchConfig(
     url="https://fullraces.com/2026",
@@ -29,7 +29,7 @@ check_once(config)
 
 ## Public Package API
 
-::: f1_race_monitor
+::: grandprix_watcher
     options:
       members:
         - AppConfig
@@ -52,4 +52,4 @@ check_once(config)
 
 ## Core Module
 
-::: f1_race_monitor.core
+::: grandprix_watcher.core

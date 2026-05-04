@@ -3,16 +3,16 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "f1-race-monitor"
+name = "grandprix-watcher"
 version = "0.1.0"
-description = "Monitor Formula 1 replay listing pages and notify when matching videos appear."
+description = "GrandPrix Watcher monitors Formula 1 replay listing pages and notifies when matching videos appear."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [
   { name = "Fourat" },
 ]
-keywords = ["f1", "formula-1", "crawler", "monitor", "notifications"]
+keywords = ["grand-prix", "f1", "formula-1", "crawler", "monitor", "notifications"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
@@ -43,12 +43,12 @@ dev = [
 ]
 
 [project.scripts]
-f1-monitor = "f1_race_monitor.core:main"
+grandprix-watcher = "grandprix_watcher.core:main"
 
 [project.urls]
-Homepage = "https://github.com/fourat/f1-race-monitor"
-Repository = "https://github.com/fourat/f1-race-monitor"
-Issues = "https://github.com/fourat/f1-race-monitor/issues"
+Homepage = "https://github.com/fourat/grandprix-watcher"
+Repository = "https://github.com/fourat/grandprix-watcher"
+Issues = "https://github.com/fourat/grandprix-watcher/issues"
 
 [tool.uv]
 package = true
@@ -66,17 +66,17 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/f1_race_monitor"]
+packages = ["src/grandprix_watcher"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=f1_race_monitor --cov-report=term-missing --cov-report=xml --cov-fail-under=100"
+addopts = "--cov=grandprix_watcher --cov-report=term-missing --cov-report=xml --cov-fail-under=100"
 testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.coverage.run]
 branch = true
-source = ["f1_race_monitor"]
-omit = ["src/f1_race_monitor/__main__.py"]
+source = ["grandprix_watcher"]
+omit = ["src/grandprix_watcher/__main__.py"]
 
 [tool.coverage.report]
 show_missing = true
@@ -99,7 +99,7 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["src/f1_race_monitor"]
+files = ["src/grandprix_watcher"]
 strict = true
 warn_unused_ignores = true
 warn_redundant_casts = true

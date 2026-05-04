@@ -6,8 +6,8 @@ from urllib.error import HTTPError, URLError
 
 import pytest
 
-from f1_race_monitor import LinkItem, NotifyConfig, build_config, load_config, notify
-from f1_race_monitor.core import (
+from grandprix_watcher import LinkItem, NotifyConfig, build_config, load_config, notify
+from grandprix_watcher.core import (
     as_string_list,
     fetch_html,
     notify_browser,
@@ -149,12 +149,12 @@ def test_notify_dispatch(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     calls = []
     item = LinkItem("RACE - F1 2026 - Miami Grand Prix", "https://example.com/video")
 
-    monkeypatch.setattr("f1_race_monitor.core.notify_console", lambda item: calls.append("console"))
-    monkeypatch.setattr("f1_race_monitor.core.notify_macos", lambda item: calls.append("macos"))
-    monkeypatch.setattr("f1_race_monitor.core.notify_desktop", lambda item: calls.append("desktop"))
-    monkeypatch.setattr("f1_race_monitor.core.notify_browser", lambda item: calls.append("browser"))
+    monkeypatch.setattr("grandprix_watcher.core.notify_console", lambda item: calls.append("console"))
+    monkeypatch.setattr("grandprix_watcher.core.notify_macos", lambda item: calls.append("macos"))
+    monkeypatch.setattr("grandprix_watcher.core.notify_desktop", lambda item: calls.append("desktop"))
+    monkeypatch.setattr("grandprix_watcher.core.notify_browser", lambda item: calls.append("browser"))
     monkeypatch.setattr(
-        "f1_race_monitor.core.notify_webhook",
+        "grandprix_watcher.core.notify_webhook",
         lambda item, url: calls.append(("webhook", url)),
     )
 
@@ -179,7 +179,7 @@ def test_notify_console(capsys) -> None:  # type: ignore[no-untyped-def]
 
 
 def test_notify_macos_unavailable(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
-    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Linux")
+    monkeypatch.setattr("grandprix_watcher.core.platform.system", lambda: "Linux")
 
     notify_macos(LinkItem("Title", "https://example.com/video"))
 
@@ -190,9 +190,9 @@ def test_notify_macos_uses_osascript(monkeypatch) -> None:  # type: ignore[no-un
     calls = []
     item = LinkItem("Title", "https://example.com/video")
 
-    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Darwin")
-    monkeypatch.setattr("f1_race_monitor.core.shutil.which", lambda command: "/usr/bin/osascript")
-    monkeypatch.setattr("f1_race_monitor.core.subprocess.run", lambda args, check: calls.append(args))
+    monkeypatch.setattr("grandprix_watcher.core.platform.system", lambda: "Darwin")
+    monkeypatch.setattr("grandprix_watcher.core.shutil.which", lambda command: "/usr/bin/osascript")
+    monkeypatch.setattr("grandprix_watcher.core.subprocess.run", lambda args, check: calls.append(args))
 
     notify_macos(item)
 
@@ -204,9 +204,9 @@ def test_notify_desktop_linux_uses_notify_send(monkeypatch) -> None:  # type: ig
     calls = []
     item = LinkItem("Title", "https://example.com/video")
 
-    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Linux")
-    monkeypatch.setattr("f1_race_monitor.core.shutil.which", lambda command: "/usr/bin/notify-send")
-    monkeypatch.setattr("f1_race_monitor.core.subprocess.run", lambda args, check: calls.append(args))
+    monkeypatch.setattr("grandprix_watcher.core.platform.system", lambda: "Linux")
+    monkeypatch.setattr("grandprix_watcher.core.shutil.which", lambda command: "/usr/bin/notify-send")
+    monkeypatch.setattr("grandprix_watcher.core.subprocess.run", lambda args, check: calls.append(args))
 
     notify_desktop(item)
 
@@ -217,8 +217,8 @@ def test_notify_desktop_darwin_delegates_to_macos(monkeypatch) -> None:  # type:
     calls = []
     item = LinkItem("Title", "https://example.com/video")
 
-    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Darwin")
-    monkeypatch.setattr("f1_race_monitor.core.notify_macos", lambda item: calls.append(item))
+    monkeypatch.setattr("grandprix_watcher.core.platform.system", lambda: "Darwin")
+    monkeypatch.setattr("grandprix_watcher.core.notify_macos", lambda item: calls.append(item))
 
     notify_desktop(item)
 
@@ -226,8 +226,8 @@ def test_notify_desktop_darwin_delegates_to_macos(monkeypatch) -> None:  # type:
 
 
 def test_notify_desktop_unavailable(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
-    monkeypatch.setattr("f1_race_monitor.core.platform.system", lambda: "Linux")
-    monkeypatch.setattr("f1_race_monitor.core.shutil.which", lambda command: None)
+    monkeypatch.setattr("grandprix_watcher.core.platform.system", lambda: "Linux")
+    monkeypatch.setattr("grandprix_watcher.core.shutil.which", lambda command: None)
 
     notify_desktop(LinkItem("Title", "https://example.com/video"))
 
@@ -239,7 +239,7 @@ def test_notify_browser(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     item = LinkItem("Title", "https://example.com/video")
 
     monkeypatch.setattr(
-        "f1_race_monitor.core.webbrowser.open",
+        "grandprix_watcher.core.webbrowser.open",
         lambda url, new: calls.append((url, new)) or True,
     )
 
@@ -251,7 +251,7 @@ def test_notify_browser(monkeypatch) -> None:  # type: ignore[no-untyped-def]
 def test_notify_browser_failure(monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
     item = LinkItem("Title", "https://example.com/video")
 
-    monkeypatch.setattr("f1_race_monitor.core.webbrowser.open", lambda url, new: False)
+    monkeypatch.setattr("grandprix_watcher.core.webbrowser.open", lambda url, new: False)
 
     notify_browser(item)
 
@@ -282,7 +282,7 @@ def test_notify_webhook(monkeypatch) -> None:  # type: ignore[no-untyped-def]
         requests.append((request.full_url, request.data, timeout))
         return FakeResponse()
 
-    monkeypatch.setattr("f1_race_monitor.core.urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setattr("grandprix_watcher.core.urllib.request.urlopen", fake_urlopen)
 
     notify_webhook(item, "https://example.com/hook")
 
@@ -308,7 +308,7 @@ def test_fetch_html_success(monkeypatch) -> None:  # type: ignore[no-untyped-def
             return b"ok"
 
     monkeypatch.setattr(
-        "f1_race_monitor.core.urllib.request.urlopen",
+        "grandprix_watcher.core.urllib.request.urlopen",
         lambda request, timeout: FakeResponse(),
     )
 
@@ -319,7 +319,7 @@ def test_fetch_html_http_error(monkeypatch) -> None:  # type: ignore[no-untyped-
     def raise_http_error(request, timeout):  # type: ignore[no-untyped-def]
         raise HTTPError(request.full_url, 500, "server error", hdrs=None, fp=None)
 
-    monkeypatch.setattr("f1_race_monitor.core.urllib.request.urlopen", raise_http_error)
+    monkeypatch.setattr("grandprix_watcher.core.urllib.request.urlopen", raise_http_error)
 
     with pytest.raises(RuntimeError, match="HTTP 500"):
         fetch_html("https://example.com", "agent")
@@ -329,7 +329,7 @@ def test_fetch_html_url_error(monkeypatch) -> None:  # type: ignore[no-untyped-d
     def raise_url_error(request, timeout):  # type: ignore[no-untyped-def]
         raise URLError("offline")
 
-    monkeypatch.setattr("f1_race_monitor.core.urllib.request.urlopen", raise_url_error)
+    monkeypatch.setattr("grandprix_watcher.core.urllib.request.urlopen", raise_url_error)
 
     with pytest.raises(RuntimeError, match="Could not fetch"):
         fetch_html("https://example.com", "agent")

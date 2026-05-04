@@ -21,3 +21,4 @@ venv/
 !.env.example
 .crawler_state.json
 .DS_Store
+.vscode/settings.json

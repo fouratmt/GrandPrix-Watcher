@@ -43,6 +43,6 @@ Release flow:
 ## Install After Publishing
 
 ```bash
-uv tool install f1-race-monitor
-f1-monitor --help
+uv tool install grandprix-watcher
+grandprix-watcher --help
 ```

@@ -1,6 +1,6 @@
-"""F1 race replay monitor package."""
+"""GrandPrix Watcher package."""
 
-from f1_race_monitor.core import (
+from grandprix_watcher.core import (
     AppConfig,
     LinkItem,
     NotifyConfig,

@@ -11,7 +11,7 @@ uv sync --extra dev
 After publishing to PyPI:
 
 ```bash
-uv tool install f1-race-monitor
+uv tool install grandprix-watcher
 ```
 
 ## One-Shot Checks
@@ -33,8 +33,8 @@ just for sprint-qualifying miami
 The same calls through the CLI:
 
 ```bash
-uv run f1-monitor --config config.toml --grand-prix miami --event race
-uv run f1-monitor --config config.toml --grand-prix monaco --event sprint
+uv run grandprix-watcher --config config.toml --grand-prix miami --event race
+uv run grandprix-watcher --config config.toml --grand-prix monaco --event sprint
 ```
 
 ## Watch Mode
@@ -60,7 +60,7 @@ just force-for race china
 Equivalent CLI:
 
 ```bash
-uv run f1-monitor --config config.toml --include-seen
+uv run grandprix-watcher --config config.toml --include-seen
 ```
 
 Avoid `include_seen = true` in long-running watch mode when `browser` is enabled, because the same link will open repeatedly.
@@ -77,9 +77,9 @@ methods = ["macos", "browser"]
 Common combinations:
 
 ```bash
-uv run f1-monitor --config config.toml --notify console
-uv run f1-monitor --config config.toml --notify macos --notify browser
-uv run f1-monitor --config config.toml --notify webhook --webhook-url https://example.com/hook
+uv run grandprix-watcher --config config.toml --notify console
+uv run grandprix-watcher --config config.toml --notify macos --notify browser
+uv run grandprix-watcher --config config.toml --notify webhook --webhook-url https://example.com/hook
 ```
 
 ## Docs Commands

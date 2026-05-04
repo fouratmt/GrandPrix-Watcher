@@ -1,1 +1,1 @@
-"""Test package for f1-race-monitor."""
+"""Test package for grandprix-watcher."""

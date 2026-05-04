@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_CONFIG = "config.toml"
-DEFAULT_USER_AGENT = "f1-script-crawler/1.0 (+https://fullraces.com/2026 monitor)"
+DEFAULT_USER_AGENT = "grandprix-watcher/0.1.0 (+https://fullraces.com/2026 monitor)"
 EVENT_REGEXES = {
     "race": r"^RACE\s*-",
     "sprint": r"^Sprint\s*-",
